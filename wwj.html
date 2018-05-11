@@ -425,14 +425,14 @@ function bg2(){
         .attr("text-anchor", "top")
         .attr("dy", "1em")
   // Add and store a brush for each axis.
-  g1.append("g")
-      .attr("class", "brush")
-      .each(function(d) {
-        d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brushstart", brushstart).on("brush", brush));
-      })
-      .selectAll("rect")
-      .attr("x", -8)
-      .attr("width", 16);
+  // g1.append("g")
+  //     .attr("class", "brush")
+  //     .each(function(d) {
+  //       d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brushstart", brushstart).on("brush", brush));
+  //     })
+  //     .selectAll("rect")
+  //     .attr("x", -8)
+  //     .attr("width", 16);
 
 
 // function position(d) {
