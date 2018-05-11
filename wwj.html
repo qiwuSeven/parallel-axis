@@ -1,45 +1,52 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<html>
+<head>
+  <title>平行轴线</title>
+  <meta charset="utf-8">
+  <style>
+    svg {
+      font: 10px sans-serif;
+    }
 
-svg {
-  font: 10px sans-serif;
-}
+    .background path {
+      fill: none;
+      stroke: #ddd;
+      shape-rendering: crispEdges;
+    }
 
-.background path {
-  fill: none;
-  stroke: #ddd;
-  shape-rendering: crispEdges;
-}
+    .foreground>path {
+      fill: none;
+      stroke: steelblue;
+      shape-rendering: crispEdges;
+    }
 
-.foreground>path {
-  fill: none;
-  stroke: steelblue;
-}
+    /*.brush .extent {
+      fill-opacity: .3;
+      stroke: #fff;
+      shape-rendering: crispEdges;
+    }*/
 
-.brush .extent {
-  fill-opacity: .3;
-  stroke: #fff;
-  shape-rendering: crispEdges;
-}
+    .axis line,
+    .axis path {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
 
-.axis line,
-.axis path {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
+    .axis text {
+      text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    }
 
-.axis text {
-  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
-  /*cursor: move;*/
-}
-
-</style>
+  </style>
+</head>
 <body>
+
 </body>
+</html>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
+//生成数据
 class Data {
     constructor() {
         var source = ['奇舞团', '360安全', '360搜素', '360手表', '360手机', '360图片', '360浏览器', '360购物', '360助手', '奇舞学院'];
@@ -82,18 +89,15 @@ class Data {
         });
     }
 }
+
 var info = new Data();
-//console.log(info.list)
-//console.log(info.getSource());
-//console.log(info.getSPort());
-//console.log(info.getDPort());
-//console.log(info.getDist());
 var sourceValue = info.getSource(), //源部门
     sportValue = info.getSPort(), //源端口
     dportValue = info.getDPort(), //目的端口
     distValue = info.getDist(); //目的部门
 
-var arr = [{
+var arr = [
+    {
         sourceDepartment: [],
         sourceDepartmentRace: []
     },
@@ -161,29 +165,27 @@ for (var i = 0; i < arr[1].sourcePort.length; i++) {
     }
     results.push(item)
 }
+// 生成数据结束
 
-console.log(results)
+    var margin = {top: 30, right: 10, bottom: 10, left: 10},
+        width = 960 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
 
-var margin = {top: 30, right: 10, bottom: 10, left: 10},
-    width = 960 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+    var x = d3.scale.ordinal().rangePoints([0, width], 1)
 
-var x = d3.scale.ordinal().rangePoints([0, width], 1),
-    y = {},
-    dragging = {};
+    var line = d3.svg.line(),
+        axis = d3.svg.axis().orient("right"),
+        background,
+        foreground,
+        source = [],
+        sport = [],
+        dport = [],
+        dist = [],
+        sourserace = [],
+        sportrace = [],
+        dportrace = [],
+        distrace = [];
 
-var line = d3.svg.line(),
-    axis = d3.svg.axis().orient("right"),
-    background,
-    foreground,
-    source = [],
-    sport = [],
-    dport = [],
-    dist = [],
-    sourserace = [],
-    sportrace = [],
-    dportrace = [],
-    distrace = [];
     for( let i = 0; i < sourceValue.length; i++){
       source.push(sourceValue[i][0]);
       sourserace.push(sourceValue[i][1]);
@@ -201,9 +203,7 @@ var line = d3.svg.line(),
       distrace.push(distValue[i][1]);
     }
 
-console.log(source)
-console.log(sourserace)
-//获取范围数组
+    //获取范围数组
     function _range(length){     
       var result = [],flag = 0, average = height/length;
       while(length){
@@ -213,66 +213,57 @@ console.log(sourserace)
       }
       return result;
     }
-    //console.log(height);
-    //console.log(_range(sport.length));
-// function _addLength(len) {
-//    return  _range(len).map(function (x, i) {
-//        if(i == 0){
-//            return x;
-//        }else {
-//            return x+30;
-//        }
 
-//    })
-// }
-var y1=d3.scale.ordinal().domain(source).range(_range(source.length));
-var y2=d3.scale.ordinal().domain(sport).range(_range(sport.length));
-var y3=d3.scale.ordinal().domain(dport).range(_range(dport.length));
-var y4=d3.scale.ordinal().domain(dist).range(_range(dist.length));
-var x1 = d3.scale.linear().domain([0, 0.2]).range([0,700])
-var x2 = d3.scale.linear().domain([0, 0.2]).range([0,700])
-var x3 = d3.scale.linear().domain([0, 0.2]).range([0,700])
-var x4 = d3.scale.linear().domain([0, 0.2]).range([0,700])
+    var y1=d3.scale.ordinal().domain(source).range(_range(source.length)),
+        y2=d3.scale.ordinal().domain(sport).range(_range(sport.length)),
+        y3=d3.scale.ordinal().domain(dport).range(_range(dport.length)),
+        y4=d3.scale.ordinal().domain(dist).range(_range(dist.length)),
+        x1 = d3.scale.linear().domain([0, 0.2 ]).range([0,700]),
+        x2 = d3.scale.linear().domain([0, 0.2]).range([0,700]),
+        x3 = d3.scale.linear().domain([0, 0.2]).range([0,700]),
+        x4 = d3.scale.linear().domain([0, 0.2]).range([0,700]);
 
-y={'源部门':y1,'源端口':y2,'目的端口':y3,'目的部门':y4};
+    var y={'源部门':y1,'源端口':y2,'目的端口':y3,'目的部门':y4};
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr('class', 'axis')
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr('class', 'axis')
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    //Extract the list of dimensions and create a scale for each.
+    x.domain(dimensions =  ['源部门','源端口','目的端口','目的部门']);
+    //随机生成颜色
+    function bg2(){
+        return '#'+Math.floor(Math.random()*0xffffff).toString(16);
+    }
+    // 画线,随机颜色.
+    background = svg.append("g")
+        .attr("class", "background")
+        .selectAll("path")
+        .data(results)
+        .enter().append("path")
+        .attr("d", path)
+    foreground = svg.append("g")
+        .attr("class", "foreground")
+        .selectAll("path")
+        .data(results)
+        .enter().append("path")
+        .attr("d", path)
 
-
-  //Extract the list of dimensions and create a scale for each.
-  x.domain(dimensions =  ['源部门','源端口','目的端口','目的部门']);
-
-  // Add grey background lines for context.
-  // background = svg.append("g")
-  //     .attr("class", "background")
-  //   .selectAll("path")
-  //     .data(results)
-  //   .enter().append("path")
-  //     .attr("d", path);
-function bg2(){
-  return '#'+Math.floor(Math.random()*0xffffff).toString(16);
-}
-  // Add blue foreground lines for focus.
-  foreground = svg.append("g")
-      .attr("class", "foreground")
-    .selectAll("path")
-      .data(results)
-    .enter().append("path")
-      .attr("d", path)
     var pa=document.getElementsByTagName('path');
-    console.log(pa)
+
     for(var i=0;i<pa.length;i++){
-      pa[i].style.stroke=bg2();
+        pa[i].style.stroke=bg2();
     } 
 
+    // Returns the path for a given data point.
+    function path(d) {
+        return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
+    }
 
-//第四个数据列表
+        //第四个数据列表
     var g4 = svg.append("g")
         .attr('class', 'aimPartment dimension')
         .attr("transform","translate(823,0)") //沿x轴偏移400 
@@ -287,8 +278,16 @@ function bg2(){
         //第一个数据
     var g1 = svg.append('g')
         .attr('class', 'sourcePartment dimension')
-        .attr("transform","translate(115,0)")    
-      
+        .attr("transform","translate(115,0)") 
+        // g1.append("g")
+        // .attr("class", "brush")
+        // .each(function(d) {
+        //   d3.select(this).call(y1.brush = d3.svg.brush().y(y1).on("brushstart", brushstart).on("brush", brush));
+        // })
+        // .selectAll("rect")
+        // .attr("x", -8)
+        // .attr("width", 16);   
+    //画面积  
     var myArea1 = d3.svg.area()
         myArea1.x0(0) //0,1,2,3,....  
         myArea1.x1(function(d, i) {return x1(d/10); }) //0,1,2,3,....  
@@ -337,56 +336,33 @@ function bg2(){
     .style('stroke', 'none')
     .style('transform', 'rotateY(-180deg)')
 
-  // Add a group element for each dimension.
-  var g = svg.selectAll(".dimension")
+    // Add a group element for each dimension.
+    var g = svg.selectAll(".dimension")
       .data(dimensions)
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "dimension")
       .attr("transform", function(d) { return "translate(" +x(d) + ")"; })
-      // .call(d3.behavior.drag()
-      //   .origin(function(d) { return {x: x(d)}; })
-      //   .on("dragstart", function(d) {
-      //     dragging[d] = x(d);
-      //     background.attr("visibility", "hidden");
-      //   })
-      //   .on("drag", function(d) {
-      //     dragging[d] = Math.min(width, Math.max(0, d3.event.x));
-      //     foreground.attr("d", path);
-      //     dimensions.sort(function(a, b) { return position(a) - position(b); });
-      //     x.domain(dimensions);
-      //     g.attr("transform", function(d) { return "translate(" + position(d) + ")"; })
-      //   })
-      //   .on("dragend", function(d) {
-      //     delete dragging[d];
-      //     transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
-      //     transition(foreground).attr("d", path);
-      //     background
-      //         .attr("d", path)
-      //       .transition()
-      //         .delay(500)
-      //         .duration(0)
-      //         .attr("visibility", null);
-      //   }));
+
 
     //第四列
-        var y_axis_4 = d3.svg.axis()
-            .scale(y4)
-            .orient('right')
-        //第三列
-        var y_axis_3 = d3.svg.axis()
-            .scale(y3)
-            .orient('right')
-        //第二列
-        var y_axis_2 = d3.svg.axis()
-            .scale(y2)
-            .orient('left')
-        //第二列
-        var y_axis_1 = d3.svg.axis()
-            .scale(y1)
-            .orient('left')
+    var y_axis_4 = d3.svg.axis()
+        .scale(y4)
+        .orient('right')
+    //第三列
+    var y_axis_3 = d3.svg.axis()
+        .scale(y3)
+        .orient('right')
+    //第二列
+    var y_axis_2 = d3.svg.axis()
+        .scale(y2)
+        .orient('left')
+    //第二列
+    var y_axis_1 = d3.svg.axis()
+        .scale(y1)
+        .orient('left')
+
     g4.append("g")
         .call(y_axis_4) //添加y轴  
-        //.attr('transform', 'translate(400, 50)')
 
     d3.select('.aimPartment')
         .append("text")
@@ -397,7 +373,7 @@ function bg2(){
 
     g3.append("g")
         .call(y_axis_3) //添加y轴  
-        // .attr('transform', 'translate(400, 50)')
+
     d3.select('.aimPort')
         .append("text")
         .text("目的端口")
@@ -407,7 +383,7 @@ function bg2(){
 
     g2.append("g")
         .call(y_axis_2) //添加y轴  
-        // .attr('transform', 'translate(400, 50)')
+
     d3.select('.sourcePort')
         .append("text")
         .text("源端口")
@@ -417,53 +393,48 @@ function bg2(){
 
     g1.append("g")
         .call(y_axis_1) //添加y轴  
-        // .attr('transform', 'translate(400, 50)')
+
     d3.select('.sourcePartment')
         .append("text")
         .text("源部门")
         .attr("transform", "translate(-40, -30)")
         .attr("text-anchor", "top")
         .attr("dy", "1em")
-  // Add and store a brush for each axis.
-  // g1.append("g")
-  //     .attr("class", "brush")
-  //     .each(function(d) {
-  //       d3.select(this).call(y[d].brush = d3.svg.brush().y(y[d]).on("brushstart", brushstart).on("brush", brush));
-  //     })
-  //     .selectAll("rect")
-  //     .attr("x", -8)
-  //     .attr("width", 16);
 
+    // Add and store a brush for each axis.
+    
+    // g1.append("g")
+    //     .attr("class", "brush")
+    //     .each(function(d) {
+    //       d3.select(this).call(y1.brush = d3.svg.brush().y(y1).on("brushstart", brushstart).on("brush", brush));
+    //     })
+    //     .selectAll("rect")
+    //     .attr("x", -8)
+    //     .attr("width", 16);
+    
+    //function brushstart() {
+    //    d3.event.sourceEvent.stopPropagation();
+    //}
 
-// function position(d) {
-//   var v = dragging[d];
-//   return v == null ? x(d) : v;
-// }
-
-// function transition(g) {
-//   return g.transition().duration(500);
-// }
-
-// Returns the path for a given data point.
-function path(d) {
-  return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
-}
-
-function brushstart() {
-  d3.event.sourceEvent.stopPropagation();
-}
-
-// Handles a brush event, toggling the display of foreground lines.
-function brush() {
-  var actives = dimensions.filter(function(p) { return !y[p].brush.empty(); }),
-      extents = actives.map(function(p) { return y[p].brush.extent(); });
-  foreground.style("display", function(d) {
-    return actives.every(function(p, i) {
-      return extents[i][0] <= d[p] && d[p] <= extents[i][1];
-    }) ? null : "none";
-  });
-}
-//console.log()
-
+    // Handles a brush event, toggling the display of foreground lines.
+    //function brush() {
+        //var actives = dimensions.filter(function(p) { return !y1.brush.empty(); }),
+        //    extents = actives.map(function(p) { return y1.brush.extent(); });
+        //  console.log(extents)
+        //foreground.attr('display','none') 
+        //var pp=document.querySelectorAll('.foreground path') 
+        // pp.style.display=function(d) {
+        //   return actives.every(function(p, i) {
+        //     return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+        //   }) ? null : "none";
+        //   //return 'none'
+        // }
+        // pp.style("display", function(d) {
+        //   return actives.every(function(p, i) {
+        //     return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+        //   }) ? null : "none";
+        //   //return 'none'
+        // });
+    //}
 
 </script>
