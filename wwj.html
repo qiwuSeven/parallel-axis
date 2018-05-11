@@ -162,7 +162,7 @@ for (var i = 0; i < arr[1].sourcePort.length; i++) {
     results.push(item)
 }
 
-console.log(results)
+// console.log(results)
 
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 960 - margin.left - margin.right,
@@ -201,8 +201,8 @@ var line = d3.svg.line(),
       distrace.push(distValue[i][1]);
     }
 
-console.log(source)
-console.log(sourserace)
+// console.log(source)
+// console.log(sourserace)
 //获取范围数组
     function _range(length){     
       var result = [],flag = 0, average = height/length;
@@ -233,7 +233,7 @@ var x2 = d3.scale.linear().domain([0, 0.2]).range([0,700])
 var x3 = d3.scale.linear().domain([0, 0.2]).range([0,700])
 var x4 = d3.scale.linear().domain([0, 0.2]).range([0,700])
 var y4=d3.scale.ordinal().domain(dist).range(_range(dist.length));
-y={'源部门':y1,'源端口':y2,'目的部门':y3,'目的端口':y4};
+y={'源部门':y1,'源端口':y2,'目的端口':y3,'目的部门':y4};
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -305,20 +305,20 @@ var svg = d3.select("body").append("svg")
     g4
     .append("path")             //<path d="M1,0L20,40L40,50L100,100L0,200"></path>
     .attr("d",myArea4(distrace))
-    .style("fill","steelblue")
+    .style("fill","#27d3c9")
     .style('stroke', 'none')
 
 
     g3
     .append("path")             //<path d="M1,0L20,40L40,50L100,100L0,200"></path>
     .attr("d",myArea3(dportrace))
-    .style("fill","steelblue")
+    .style("fill","#27d33a")
     .style('stroke', 'none')
 
     g2
     .append("path")             //<path d="M1,0L20,40L40,50L100,100L0,200"></path>
     .attr("d",myArea2(sportrace))
-    .style("fill","steelblue")
+    .style("fill","#EEB4B4")
     .style('stroke', 'none')
     .style('transform', 'rotateY(-180deg)')
 
@@ -428,8 +428,10 @@ var svg = d3.select("body").append("svg")
 
 
 function position(d) {
-  var v = dragging[d];
-  return v == null ? x(d) : v;
+	// console.log(d)
+ //  var v = dragging[d];
+ return x(d);
+  // return v == null ? x(d) : v;
 }
 
 // function transition(g) {
